@@ -1,15 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import App from '../App.vue'
-import Admin from '../Admin.vue'
-import Auth from '@/Auth.vue'
+import Home from '../views/Home.vue'
+import Auth from '../views/Auth.vue'
+import Admin from '../views/Admin.vue'
 
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: App },
+    { path: '/', component: Home },
     { path: '/auth', component: Auth },
     { path: '/admin', component: Admin },
   ],
 })
-
-export default router
