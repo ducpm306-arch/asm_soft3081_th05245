@@ -1,209 +1,115 @@
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
 const router = useRouter()
-
-const loginForm = ref({ email: '', password: '' })
-const registerForm = ref({ name: '', email: '', phone: '', password: '' })
-const loginError = ref('')
-const registerSuccess = ref(false)
-
-function handleLogin() {
-  loginError.value = ''
-  if (!loginForm.value.email || !loginForm.value.password) {
-    loginError.value = 'Vui lòng nhập đầy đủ thông tin.'
-    return
-  }
-  if (loginForm.value.email === 'admin@biteeth.vn' && loginForm.value.password === '123456') {
-    router.push('/admin')
-  } else {
-    loginError.value = 'Email hoặc mật khẩu không đúng.'
-  }
-}
-
-function handleRegister() {
-  const { name, email, phone, password } = registerForm.value
-  if (!name || !email || !phone || !password) return
-  registerSuccess.value = true
-  registerForm.value = { name: '', email: '', phone: '', password: '' }
-}
 </script>
 
 <template>
+  <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-      <a class="nav-brand" @click.prevent="router.push('/')" style="cursor: pointer">BiTeeth</a>
+      <a class="nav-brand" @click.prevent="router.push('/')" href="#">BiTeeth</a>
     </div>
   </nav>
 
+  <!-- HERO NHỎ -->
   <section class="auth-hero">
-    <div class="container">
-      <div class="text-center">
-        <p class="section-label">Tài khoản</p>
-        <h2>Đăng nhập hoặc đăng ký</h2>
-        <p class="auth-hero-sub">Quản lý lịch hẹn và theo dõi hồ sơ sức khoẻ răng miệng của bạn</p>
-      </div>
+    <div class="container text-center">
+      <p class="section-label">Tài khoản</p>
+      <h2>Đăng nhập hoặc đăng ký</h2>
+      <p class="auth-hero-sub">Quản lý lịch hẹn và theo dõi hồ sơ sức khoẻ răng miệng của bạn</p>
     </div>
   </section>
 
+  <!-- FORM CHÍNH -->
   <section class="auth-section">
     <div class="container">
       <div class="row g-0 auth-card">
-        <div class="col-md-6 auth-side auth-side-left">
-          <div class="auth-form-wrap">
-            <h4 class="auth-title">Đăng nhập</h4>
-            <p class="auth-sub">Chào mừng bạn trở lại</p>
+        <!-- BÊN TRÁI: ĐĂNG NHẬP -->
+        <div class="col-md-6 p-4 p-lg-5">
+          <h4 class="auth-title">Đăng nhập</h4>
+          <p class="auth-sub">Chào mừng bạn trở lại</p>
 
-            <div
-              v-if="loginError"
-              class="alert alert-danger py-2 px-3 mb-3"
-              style="
-                font-size: 0.85rem;
-                border-radius: 2px;
-                border: none;
-                background: #fee2e2;
-                color: #991b1b;
-              "
-            >
-              {{ loginError }}
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input
-                v-model="loginForm.email"
-                type="email"
-                class="form-control"
-                placeholder="email@example.com"
-                @keydown.enter="handleLogin"
-              />
-            </div>
-
-            <div class="mb-1">
-              <label class="form-label">Mật khẩu</label>
-              <input
-                v-model="loginForm.password"
-                type="password"
-                class="form-control"
-                placeholder="••••••••"
-                @keydown.enter="handleLogin"
-              />
-            </div>
-
-            <div class="text-end mb-4">
-              <a href="#" class="forgot-link">Quên mật khẩu?</a>
-            </div>
-
-            <button @click="handleLogin" class="btn btn-teal w-100 mb-3">Đăng nhập</button>
-
-            <div class="auth-divider-text">
-              <span>hoặc</span>
-            </div>
-
-            <button
-              class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
-              style="border-radius: 2px; font-size: 0.875rem"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/64/2991/2991148.png"
-                style="width: 18px; height: 18px"
-                alt="Google"
-              />
-              Tiếp tục với Google
-            </button>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" placeholder="email@example.com" />
           </div>
+
+          <div class="mb-2">
+            <label class="form-label">Mật khẩu</label>
+            <input type="password" class="form-control" placeholder="••••••••" />
+          </div>
+
+          <div class="text-end mb-4">
+            <a href="#" class="forgot-link">Quên mật khẩu?</a>
+          </div>
+
+          <button @click="router.push('/admin')" class="btn btn-teal w-100 mb-4">Đăng nhập</button>
+
+          <div class="auth-or">
+            <span>hoặc</span>
+          </div>
+
+          <button
+            class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2 mt-4"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/64/2991/2991148.png"
+              style="width: 18px; height: 18px"
+              alt="Google"
+            />
+            Tiếp tục với Google
+          </button>
+
+          <p class="text-center mt-4" style="font-size: 0.82rem; color: var(--muted)">
+            Chưa có tài khoản?
+            <a href="#register" class="auth-link">Đăng ký ngay</a>
+          </p>
         </div>
 
-        <div class="auth-vertical-divider d-none d-md-block"></div>
+        <!-- ĐƯỜNG KẺ DỌC -->
+        <div class="auth-vline d-none d-md-block"></div>
 
-        <div class="col-md-6 auth-side auth-side-right">
-          <div class="auth-form-wrap">
-            <h4 class="auth-title">
-              Đăng ký
-              <span class="badge-new ms-2">Miễn phí</span>
-            </h4>
-            <p class="auth-sub">Tạo tài khoản chỉ mất 1 phút</p>
+        <!-- BÊN PHẢI: ĐĂNG KÝ -->
+        <div class="col-md-6 p-4 p-lg-5" id="register">
+          <h4 class="auth-title">
+            Đăng ký
+            <span class="badge-new ms-2">Miễn phí</span>
+          </h4>
+          <p class="auth-sub">Tạo tài khoản chỉ mất 1 phút</p>
 
-            <div
-              v-if="registerSuccess"
-              class="alert py-2 px-3 mb-3"
-              style="
-                font-size: 0.85rem;
-                border-radius: 2px;
-                border: none;
-                background: #d1fae5;
-                color: #065f46;
-              "
-            >
-              Đăng ký thành công! Vui lòng đăng nhập.
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Họ và tên</label>
-              <input
-                v-model="registerForm.name"
-                type="text"
-                class="form-control"
-                placeholder="Nguyễn Văn A"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input
-                v-model="registerForm.email"
-                type="email"
-                class="form-control"
-                placeholder="email@example.com"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Số điện thoại</label>
-              <input
-                v-model="registerForm.phone"
-                type="tel"
-                class="form-control"
-                placeholder="0901 234 567"
-              />
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label">Mật khẩu</label>
-              <input
-                v-model="registerForm.password"
-                type="password"
-                class="form-control"
-                placeholder="Tối thiểu 6 ký tự"
-              />
-            </div>
-
-            <button
-              @click="handleRegister"
-              class="btn btn-outline-teal w-100"
-              :disabled="
-                !registerForm.name ||
-                !registerForm.email ||
-                !registerForm.phone ||
-                !registerForm.password
-              "
-            >
-              Tạo tài khoản
-            </button>
-
-            <p class="auth-terms mt-3">
-              Bằng cách đăng ký, bạn đồng ý với
-              <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của chúng
-              tôi.
-            </p>
+          <div class="mb-3">
+            <label class="form-label">Họ và tên</label>
+            <input type="text" class="form-control" placeholder="Nguyễn Văn A" />
           </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" placeholder="email@example.com" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Số điện thoại</label>
+            <input type="tel" class="form-control" placeholder="0901 234 567" />
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Mật khẩu</label>
+            <input type="password" class="form-control" placeholder="Tối thiểu 6 ký tự" />
+          </div>
+
+          <button class="btn btn-outline-teal w-100">Tạo tài khoản</button>
+
+          <p class="auth-terms mt-3">
+            Bằng cách đăng ký, bạn đồng ý với
+            <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <footer class="auth-footer-bar">
+  <!-- FOOTER -->
+  <footer class="auth-footer">
     <div class="container text-center">
       <p>© {{ new Date().getFullYear() }} BiTeeth. All rights reserved.</p>
     </div>
@@ -261,21 +167,26 @@ nav.navbar {
 
 .auth-section {
   padding: 4rem 0 6rem;
-}
-.auth-card {
   background: #fff;
-  border: 1px solid var(--line);
-  max-width: 860px;
-  margin: 0 auto;
-  position: relative;
 }
 
-.auth-side {
-  padding: 0;
+.auth-card {
+  max-width: 860px;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  position: relative;
+  background: #fff;
 }
-.auth-form-wrap {
-  padding: 2.5rem 2.5rem;
+
+.auth-vline {
+  width: 1px;
+  background: var(--line);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
 }
+
 .auth-title {
   font-family: 'Playfair Display', serif;
   font-size: 1.4rem;
@@ -288,15 +199,6 @@ nav.navbar {
   font-size: 0.875rem;
   color: var(--muted);
   margin-bottom: 1.75rem;
-}
-
-.auth-vertical-divider {
-  width: 1px;
-  background: var(--line);
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
 }
 
 .form-label {
@@ -325,13 +227,14 @@ nav.navbar {
   border-radius: 2px;
   font-size: 0.875rem;
   font-weight: 500;
-  padding: 0.7rem 1.5rem;
+  padding: 0.7rem;
   transition: background 0.2s;
 }
 .btn-teal:hover {
   background: var(--teal-light);
   color: #fff;
 }
+
 .btn-outline-teal {
   border: 1px solid var(--teal);
   color: var(--teal);
@@ -339,16 +242,19 @@ nav.navbar {
   border-radius: 2px;
   font-size: 0.875rem;
   font-weight: 500;
-  padding: 0.7rem 1.5rem;
+  padding: 0.7rem;
   transition: all 0.2s;
 }
 .btn-outline-teal:hover {
   background: var(--teal);
   color: #fff;
 }
-.btn-outline-teal:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+
+.btn-outline-secondary {
+  border-radius: 2px;
+  font-size: 0.875rem;
+  color: var(--dark);
+  border-color: var(--line);
 }
 
 .forgot-link {
@@ -359,15 +265,15 @@ nav.navbar {
 .forgot-link:hover {
   text-decoration: underline;
 }
-.auth-divider-text {
+
+.auth-or {
   text-align: center;
   position: relative;
-  margin: 1.25rem 0;
   color: var(--muted);
   font-size: 0.8rem;
 }
-.auth-divider-text::before,
-.auth-divider-text::after {
+.auth-or::before,
+.auth-or::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -375,11 +281,20 @@ nav.navbar {
   height: 1px;
   background: var(--line);
 }
-.auth-divider-text::before {
+.auth-or::before {
   left: 0;
 }
-.auth-divider-text::after {
+.auth-or::after {
   right: 0;
+}
+
+.auth-link {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+}
+.auth-link:hover {
+  text-decoration: underline;
 }
 
 .badge-new {
@@ -391,6 +306,7 @@ nav.navbar {
   border-radius: 20px;
   font-family: 'DM Sans', sans-serif;
 }
+
 .auth-terms {
   font-size: 0.75rem;
   color: var(--muted);
@@ -401,11 +317,11 @@ nav.navbar {
   text-decoration: none;
 }
 
-.auth-footer-bar {
+.auth-footer {
   background: var(--dark);
   padding: 1.25rem 0;
 }
-.auth-footer-bar p {
+.auth-footer p {
   color: #9ca3af;
   font-size: 0.8rem;
   margin: 0;
