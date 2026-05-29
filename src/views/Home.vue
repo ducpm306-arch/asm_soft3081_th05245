@@ -161,7 +161,7 @@ function scrollTo(id) {
       <div class="row align-items-center g-5">
         <div class="col-md-6">
           <img
-            src="https://images.unsplash.com/photo-1588776814546-1ffbb172c2e4?w=800&q=80"
+            src="https://i.ex-cdn.com/theleader.vn/files/f1/Upload_vn/hungnguyen/2023/10/2/parkway.jpg"
             class="img-fluid"
             style="height: 400px; width: 100%; object-fit: cover"
             alt="Phòng khám"
