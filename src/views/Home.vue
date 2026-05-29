@@ -197,10 +197,10 @@ function scrollTo(id) {
     </div>
   </section>
 
-  <section id="doctors" class="py-5 bg-white">
+  <section id="doctors" class="py-4 py-md-5 bg-white">
     <div class="container">
       <p class="text-success text-uppercase small text-center mb-2">Đội ngũ</p>
-      <h2 class="text-center mb-5">Bác sĩ của chúng tôi</h2>
+      <h2 class="text-center mb-4 mb-md-5 fs-3 fs-md-2">Bác sĩ của chúng tôi</h2>
       <div class="row g-4">
         <div v-for="doctor in doctors" :key="doctor.id" class="col-6 col-md-3 text-center">
           <img
@@ -216,12 +216,12 @@ function scrollTo(id) {
     </div>
   </section>
 
-  <section id="booking" class="py-5">
+  <section id="booking" class="py-4 py-md-5">
     <div class="container">
-      <div class="row g-5">
+      <div class="row g-4 g-md-5">
         <div class="col-md-5">
           <p class="text-success text-uppercase small mb-2">Đặt lịch</p>
-          <h2 class="mb-4">Đặt lịch khám ngay hôm nay</h2>
+          <h2 class="mb-3 mb-md-4 fs-3 fs-md-2">Đặt lịch khám ngay hôm nay</h2>
           <p class="text-muted mb-4">
             Chúng tôi sẽ liên hệ xác nhận lịch hẹn trong vòng 30 phút. Vui lòng đến trước 10 phút để
             hoàn thiện hồ sơ.
@@ -252,7 +252,7 @@ function scrollTo(id) {
           </div>
         </div>
         <div class="col-md-7">
-          <div class="border p-4">
+          <div class="border p-3 p-md-4">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label small">Họ và tên</label>

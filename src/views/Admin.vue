@@ -15,7 +15,7 @@ function navigate(page) {
 
 <template>
   <div class="d-flex">
-    <div class="bg-dark text-white d-flex flex-column" style="width: 250px; min-height: 100vh">
+    <div class="bg-dark text-white d-none d-lg-flex flex-column" style="width: 250px; min-height: 100vh">
       <div class="p-4 border-bottom border-secondary">
         <h5 class="mb-0">BiTeeth</h5>
         <small class="text-muted">Admin Panel</small>
@@ -356,9 +356,9 @@ function navigate(page) {
         </div>
       </div>
 
-      <div v-show="currentPage === 'booking'" class="p-4">
-        <h4 class="mb-2">Bán hàng / Đặt lịch</h4>
-        <p class="text-muted mb-4">Quản lý lịch hẹn và tạo lịch hẹn mới cho khách hàng</p>
+      <div v-show="currentPage === 'booking'" class="p-3 p-md-4">
+        <h5 class="mb-2">Bán hàng / Đặt lịch</h5>
+        <p class="text-muted mb-3 mb-md-4 small">Quản lý lịch hẹn và tạo lịch hẹn mới cho khách hàng</p>
         <div class="row g-4">
           <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
@@ -647,9 +647,9 @@ function navigate(page) {
         </div>
       </div>
 
-      <div v-show="currentPage === 'customers'" class="p-4">
-        <h4 class="mb-2">Quản lý khách hàng</h4>
-        <p class="text-muted mb-4">Danh sách và hồ sơ bệnh nhân</p>
+      <div v-show="currentPage === 'customers'" class="p-3 p-md-4">
+        <h5 class="mb-2">Quản lý khách hàng</h5>
+        <p class="text-muted mb-3 mb-md-4 small">Danh sách và hồ sơ bệnh nhân</p>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <input
             class="form-control form-control-sm"
@@ -714,9 +714,9 @@ function navigate(page) {
         </div>
       </div>
 
-      <div v-show="currentPage === 'staff'" class="p-4">
-        <h4 class="mb-2">Quản lý nhân viên</h4>
-        <p class="text-muted mb-4">Danh sách bác sĩ và nhân viên phòng khám</p>
+      <div v-show="currentPage === 'staff'" class="p-3 p-md-4">
+        <h5 class="mb-2">Quản lý nhân viên</h5>
+        <p class="text-muted mb-3 mb-md-4 small">Danh sách bác sĩ và nhân viên phòng khám</p>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="d-flex gap-2">
             <input
@@ -785,9 +785,9 @@ function navigate(page) {
         </div>
       </div>
 
-      <div v-show="currentPage === 'services'" class="p-4">
-        <h4 class="mb-2">Quản lý dịch vụ</h4>
-        <p class="text-muted mb-4">Danh sách dịch vụ và bảng giá</p>
+      <div v-show="currentPage === 'services'" class="p-3 p-md-4">
+        <h5 class="mb-2">Quản lý dịch vụ</h5>
+        <p class="text-muted mb-3 mb-md-4 small">Danh sách dịch vụ và bảng giá</p>
         <div class="row g-4">
           <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
@@ -905,9 +905,9 @@ function navigate(page) {
         </div>
       </div>
 
-      <div v-show="currentPage === 'invoices'" class="p-4">
-        <h4 class="mb-2">Quản lý hoá đơn</h4>
-        <p class="text-muted mb-4">Danh sách hoá đơn và thanh toán</p>
+      <div v-show="currentPage === 'invoices'" class="p-3 p-md-4">
+        <h5 class="mb-2">Quản lý hoá đơn</h5>
+        <p class="text-muted mb-3 mb-md-4 small">Danh sách hoá đơn và thanh toán</p>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="d-flex gap-2">
             <input
