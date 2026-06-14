@@ -1,4 +1,22 @@
-# .
+# BiTeeth
+
+Ứng dụng đặt lịch nha khoa bằng Vue 3 và Vite.
+
+## Chạy dự án
+
+```sh
+npm install
+npm run dev
+```
+
+## Các màn hình chính
+
+- Khách hàng: `/`, `/gio-hang`, `/auth`
+- Quản trị: `/admin/tong-quan`, `/admin/dat-lich`, `/admin/khach-hang`, `/admin/nhan-vien`, `/admin/dich-vu`, `/admin/hoa-don`
+
+## Dữ liệu
+
+Ứng dụng dùng dữ liệu list cứng trong thư mục `src/data`. CRUD chỉ thay đổi dữ liệu trong bộ nhớ khi app đang chạy.
 
 This template should help get you started developing with Vue 3 in Vite.
 
