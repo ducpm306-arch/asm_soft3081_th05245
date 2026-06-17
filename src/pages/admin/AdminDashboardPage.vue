@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/admin/StatCard.vue'
 import { formatPrice } from '@/data/services'
@@ -7,19 +6,19 @@ import { useAdminDataStore } from '@/stores/adminData'
 
 const adminDataStore = useAdminDataStore()
 
-const confirmedAppointments = computed(() =>
-  adminDataStore.appointments.filter((item) => item.status === 'Đã xác nhận')
-)
+function soLichDaXacNhan() {
+  return adminDataStore.appointments.filter((item) => item.status === 'Đã xác nhận').length
+}
 
-const unpaidInvoices = computed(() =>
-  adminDataStore.invoices.filter((item) => item.status === 'Chưa thanh toán')
-)
+function soHoaDonChoThanhToan() {
+  return adminDataStore.invoices.filter((item) => item.status === 'Chưa thanh toán').length
+}
 
-const totalRevenue = computed(() =>
-  adminDataStore.invoices
+function tinhDoanhThu() {
+  return adminDataStore.invoices
     .filter((item) => item.status === 'Đã thanh toán')
     .reduce((total, item) => total + Number(item.amount || 0), 0)
-)
+}
 </script>
 
 <template>
@@ -30,13 +29,13 @@ const totalRevenue = computed(() =>
       <StatCard label="Lịch hẹn" :value="adminDataStore.appointments.length" note="Tất cả lịch" />
     </div>
     <div class="col-6 col-lg-3">
-      <StatCard label="Đã xác nhận" :value="confirmedAppointments.length" note="Sẵn sàng khám" />
+      <StatCard label="Đã xác nhận" :value="soLichDaXacNhan()" note="Sẵn sàng khám" />
     </div>
     <div class="col-6 col-lg-3">
-      <StatCard label="Doanh thu" :value="formatPrice(totalRevenue)" note="Đã thanh toán" />
+      <StatCard label="Doanh thu" :value="formatPrice(tinhDoanhThu())" note="Đã thanh toán" />
     </div>
     <div class="col-6 col-lg-3">
-      <StatCard label="Hóa đơn chờ" :value="unpaidInvoices.length" note="Cần thu tiền" color="warning" />
+      <StatCard label="Hóa đơn chờ" :value="soHoaDonChoThanhToan()" note="Cần thu tiền" color="warning" />
     </div>
   </div>
 

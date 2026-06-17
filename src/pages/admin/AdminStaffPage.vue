@@ -1,15 +1,14 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { ref } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import FormButtons from '@/components/admin/FormButtons.vue'
 import { useAdminDataStore } from '@/stores/adminData'
 
 const adminDataStore = useAdminDataStore()
 const keyword = ref('')
-const roleFilter = ref('Tất cả')
-const editingId = ref(null)
+const locChucVu = ref('Tất cả')
+const viTriCanUpdate = ref(-1)
 
-const staffForm = reactive({
+const newNhanVien = ref({
   name: '',
   role: 'Bác sĩ',
   specialty: '',
@@ -20,62 +19,60 @@ const staffForm = reactive({
   active: true
 })
 
-const filteredStaff = computed(() =>
-  adminDataStore.staff.filter((staffItem) => {
+function listNhanVienHienThi() {
+  return adminDataStore.staff.filter((staffItem) => {
     const sameKeyword = staffItem.name.toLowerCase().includes(keyword.value.toLowerCase())
-    const sameRole = roleFilter.value === 'Tất cả' || staffItem.role === roleFilter.value
+    const sameRole = locChucVu.value === 'Tất cả' || staffItem.role === locChucVu.value
     return sameKeyword && sameRole
   })
-)
+}
 
 function resetForm() {
-  editingId.value = null
-  staffForm.name = ''
-  staffForm.role = 'Bác sĩ'
-  staffForm.specialty = ''
-  staffForm.experience = ''
-  staffForm.phone = ''
-  staffForm.schedule = ''
-  staffForm.image = ''
-  staffForm.active = true
+  newNhanVien.value = {
+    name: '',
+    role: 'Bác sĩ',
+    specialty: '',
+    experience: '',
+    phone: '',
+    schedule: '',
+    image: '',
+    active: true
+  }
+  viTriCanUpdate.value = -1
 }
 
-function editStaff(staffItem) {
-  editingId.value = staffItem.id
-  staffForm.name = staffItem.name
-  staffForm.role = staffItem.role
-  staffForm.specialty = staffItem.specialty
-  staffForm.experience = staffItem.experience
-  staffForm.phone = staffItem.phone
-  staffForm.schedule = staffItem.schedule
-  staffForm.image = staffItem.image
-  staffForm.active = staffItem.active
+function detailNhanVien(staffItem) {
+  newNhanVien.value = { ...staffItem }
+  viTriCanUpdate.value = adminDataStore.staff.findIndex((item) => item.id === staffItem.id)
 }
 
-function saveStaff() {
-  const staffData = {
-    name: staffForm.name,
-    role: staffForm.role,
-    specialty: staffForm.specialty,
-    experience: staffForm.experience,
-    phone: staffForm.phone,
-    schedule: staffForm.schedule,
-    image: staffForm.image || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=64&h=64&fit=crop',
-    active: staffForm.active
-  }
-
-  if (editingId.value) {
-    adminDataStore.updateItem('staff', editingId.value, staffData)
-  } else {
-    adminDataStore.createItem('staff', staffData)
-  }
+function addNhanVien() {
+  adminDataStore.staff.push({
+    id: adminDataStore.staff.length + 1,
+    ...newNhanVien.value,
+    image: newNhanVien.value.image || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=64&h=64&fit=crop'
+  })
 
   resetForm()
 }
 
-function deleteStaff(id) {
-  if (confirm('Bạn có chắc muốn xóa nhân viên này không?')) {
-    adminDataStore.deleteItem('staff', id)
+function updateNhanVien() {
+  if (viTriCanUpdate.value === -1) {
+    alert('Bạn hãy chọn nhân viên cần sửa')
+    return
+  }
+
+  adminDataStore.staff[viTriCanUpdate.value] = { ...newNhanVien.value }
+
+  resetForm()
+}
+
+function removeNhanVien(staffItem) {
+  const index = adminDataStore.staff.findIndex((item) => item.id === staffItem.id)
+
+  if (index !== -1 && confirm('Bạn có chắc muốn xóa nhân viên này không?')) {
+    adminDataStore.staff.splice(index, 1)
+    resetForm()
   }
 }
 </script>
@@ -84,7 +81,7 @@ function deleteStaff(id) {
   <PageHeader title="Quản lý nhân viên" description="Thêm, sửa, xóa bác sĩ và lễ tân">
     <div class="d-flex gap-2">
       <input v-model="keyword" class="form-control form-control-sm" style="width: 180px" placeholder="Tìm nhân viên" />
-      <select v-model="roleFilter" class="form-select form-select-sm" style="width: 120px">
+      <select v-model="locChucVu" class="form-select form-select-sm" style="width: 120px">
         <option>Tất cả</option>
         <option>Bác sĩ</option>
         <option>Lễ tân</option>
@@ -96,44 +93,48 @@ function deleteStaff(id) {
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h6 class="mb-3">{{ editingId ? 'Sửa nhân viên' : 'Thêm nhân viên' }}</h6>
-          <form @submit.prevent="saveStaff">
+          <h6 class="mb-3">{{ viTriCanUpdate === -1 ? 'Thêm nhân viên' : 'Sửa nhân viên' }}</h6>
+          <form @submit.prevent>
             <div class="mb-3">
               <label class="form-label small">Họ tên</label>
-              <input v-model="staffForm.name" required class="form-control form-control-sm" />
+              <input v-model="newNhanVien.name" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Chức vụ</label>
-              <select v-model="staffForm.role" class="form-select form-select-sm">
+              <select v-model="newNhanVien.role" class="form-select form-select-sm">
                 <option>Bác sĩ</option>
                 <option>Lễ tân</option>
               </select>
             </div>
             <div class="mb-3">
               <label class="form-label small">Chuyên môn</label>
-              <input v-model="staffForm.specialty" required class="form-control form-control-sm" />
+              <input v-model="newNhanVien.specialty" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Kinh nghiệm</label>
-              <input v-model="staffForm.experience" required class="form-control form-control-sm" />
+              <input v-model="newNhanVien.experience" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Điện thoại</label>
-              <input v-model="staffForm.phone" required class="form-control form-control-sm" />
+              <input v-model="newNhanVien.phone" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Lịch làm việc</label>
-              <input v-model="staffForm.schedule" required class="form-control form-control-sm" />
+              <input v-model="newNhanVien.schedule" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Ảnh</label>
-              <input v-model="staffForm.image" class="form-control form-control-sm" />
+              <input v-model="newNhanVien.image" class="form-control form-control-sm" />
             </div>
             <div class="form-check form-switch mb-3">
-              <input id="staffActive" v-model="staffForm.active" class="form-check-input" type="checkbox" />
+              <input id="staffActive" v-model="newNhanVien.active" class="form-check-input" type="checkbox" />
               <label class="form-check-label small" for="staffActive">Đang làm việc</label>
             </div>
-            <FormButtons :editing="Boolean(editingId)" @cancel="resetForm" />
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-success btn-sm flex-fill" @click="addNhanVien">Thêm</button>
+              <button type="button" class="btn btn-warning btn-sm flex-fill" @click="updateNhanVien">Cập nhật</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" @click="resetForm">Làm mới</button>
+            </div>
           </form>
         </div>
       </div>
@@ -155,7 +156,7 @@ function deleteStaff(id) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="staffItem in filteredStaff" :key="staffItem.id">
+                <tr v-for="staffItem in listNhanVienHienThi()" :key="staffItem.id">
                   <td class="small">
                     <div class="d-flex align-items-center gap-2">
                       <img :src="staffItem.image" class="rounded-circle" style="width: 36px; height: 36px; object-fit: cover" alt="" />
@@ -174,11 +175,11 @@ function deleteStaff(id) {
                     </span>
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-link text-success" @click="editStaff(staffItem)">Sửa</button>
-                    <button class="btn btn-sm btn-link text-danger" @click="deleteStaff(staffItem.id)">Xóa</button>
+                    <button class="btn btn-sm btn-link text-success" @click="detailNhanVien(staffItem)">Sửa</button>
+                    <button class="btn btn-sm btn-link text-danger" @click="removeNhanVien(staffItem)">Xóa</button>
                   </td>
                 </tr>
-                <tr v-if="filteredStaff.length === 0">
+                <tr v-if="listNhanVienHienThi().length === 0">
                   <td colspan="6" class="text-center text-muted small">Không có dữ liệu</td>
                 </tr>
               </tbody>

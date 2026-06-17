@@ -1,15 +1,14 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { ref } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import FormButtons from '@/components/admin/FormButtons.vue'
 import { formatPrice } from '@/data/services'
 import { useAdminDataStore } from '@/stores/adminData'
 
 const adminDataStore = useAdminDataStore()
 const keyword = ref('')
-const editingId = ref(null)
+const viTriCanUpdate = ref(-1)
 
-const serviceForm = reactive({
+const newDichVu = ref({
   name: '',
   price: '',
   unit: '',
@@ -18,54 +17,60 @@ const serviceForm = reactive({
   active: true
 })
 
-const filteredServices = computed(() =>
-  adminDataStore.services.filter((service) =>
-    service.name.toLowerCase().includes(keyword.value.toLowerCase())
-  )
-)
+function listDichVuHienThi() {
+  return adminDataStore.services.filter((service) => {
+    return service.name.toLowerCase().includes(keyword.value.toLowerCase())
+  })
+}
 
 function resetForm() {
-  editingId.value = null
-  serviceForm.name = ''
-  serviceForm.price = ''
-  serviceForm.unit = ''
-  serviceForm.description = ''
-  serviceForm.image = ''
-  serviceForm.active = true
+  newDichVu.value = {
+    name: '',
+    price: '',
+    unit: '',
+    description: '',
+    image: '',
+    active: true
+  }
+  viTriCanUpdate.value = -1
 }
 
-function editService(service) {
-  editingId.value = service.id
-  serviceForm.name = service.name
-  serviceForm.price = service.price
-  serviceForm.unit = service.unit || ''
-  serviceForm.description = service.description
-  serviceForm.image = service.image
-  serviceForm.active = service.active
+function detailDichVu(service) {
+  newDichVu.value = { ...service }
+  viTriCanUpdate.value = adminDataStore.services.findIndex((item) => item.id === service.id)
 }
 
-function saveService() {
-  const serviceData = {
-    name: serviceForm.name,
-    price: Number(serviceForm.price),
-    unit: serviceForm.unit,
-    description: serviceForm.description,
-    image: serviceForm.image || 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800&q=80',
-    active: serviceForm.active
+function addDichVu() {
+  adminDataStore.services.push({
+    id: adminDataStore.services.length + 1,
+    ...newDichVu.value,
+    price: Number(newDichVu.value.price),
+    image: newDichVu.value.image || 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800&q=80'
+  })
+
+  resetForm()
+}
+
+function updateDichVu() {
+  if (viTriCanUpdate.value === -1) {
+    alert('Bạn hãy chọn dịch vụ cần sửa')
+    return
   }
 
-  if (editingId.value) {
-    adminDataStore.updateItem('services', editingId.value, serviceData)
-  } else {
-    adminDataStore.createItem('services', serviceData)
+  adminDataStore.services[viTriCanUpdate.value] = {
+    ...newDichVu.value,
+    price: Number(newDichVu.value.price)
   }
 
   resetForm()
 }
 
-function deleteService(id) {
-  if (confirm('Bạn có chắc muốn xóa dịch vụ này không?')) {
-    adminDataStore.deleteItem('services', id)
+function removeDichVu(service) {
+  const index = adminDataStore.services.findIndex((item) => item.id === service.id)
+
+  if (index !== -1 && confirm('Bạn có chắc muốn xóa dịch vụ này không?')) {
+    adminDataStore.services.splice(index, 1)
+    resetForm()
   }
 }
 </script>
@@ -79,33 +84,37 @@ function deleteService(id) {
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h6 class="mb-3">{{ editingId ? 'Sửa dịch vụ' : 'Thêm dịch vụ' }}</h6>
-          <form @submit.prevent="saveService">
+          <h6 class="mb-3">{{ viTriCanUpdate === -1 ? 'Thêm dịch vụ' : 'Sửa dịch vụ' }}</h6>
+          <form @submit.prevent>
             <div class="mb-3">
               <label class="form-label small">Tên dịch vụ</label>
-              <input v-model="serviceForm.name" required class="form-control form-control-sm" />
+              <input v-model="newDichVu.name" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Giá</label>
-              <input v-model="serviceForm.price" required type="number" min="0" class="form-control form-control-sm" />
+              <input v-model="newDichVu.price" required type="number" min="0" class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Đơn vị</label>
-              <input v-model="serviceForm.unit" class="form-control form-control-sm" placeholder="Ví dụ: răng" />
+              <input v-model="newDichVu.unit" class="form-control form-control-sm" placeholder="Ví dụ: răng" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Ảnh</label>
-              <input v-model="serviceForm.image" class="form-control form-control-sm" />
+              <input v-model="newDichVu.image" class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Mô tả</label>
-              <textarea v-model="serviceForm.description" required rows="3" class="form-control form-control-sm"></textarea>
+              <textarea v-model="newDichVu.description" required rows="3" class="form-control form-control-sm"></textarea>
             </div>
             <div class="form-check form-switch mb-3">
-              <input id="serviceActive" v-model="serviceForm.active" class="form-check-input" type="checkbox" />
+              <input id="serviceActive" v-model="newDichVu.active" class="form-check-input" type="checkbox" />
               <label class="form-check-label small" for="serviceActive">Đang hoạt động</label>
             </div>
-            <FormButtons :editing="Boolean(editingId)" @cancel="resetForm" />
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-success btn-sm flex-fill" @click="addDichVu">Thêm</button>
+              <button type="button" class="btn btn-warning btn-sm flex-fill" @click="updateDichVu">Cập nhật</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" @click="resetForm">Làm mới</button>
+            </div>
           </form>
         </div>
       </div>
@@ -125,7 +134,7 @@ function deleteService(id) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="service in filteredServices" :key="service.id">
+                <tr v-for="service in listDichVuHienThi()" :key="service.id">
                   <td class="small">
                     <div class="fw-bold">{{ service.name }}</div>
                     <div class="text-muted">{{ service.description }}</div>
@@ -137,11 +146,11 @@ function deleteService(id) {
                     </span>
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-link text-success" @click="editService(service)">Sửa</button>
-                    <button class="btn btn-sm btn-link text-danger" @click="deleteService(service.id)">Xóa</button>
+                    <button class="btn btn-sm btn-link text-success" @click="detailDichVu(service)">Sửa</button>
+                    <button class="btn btn-sm btn-link text-danger" @click="removeDichVu(service)">Xóa</button>
                   </td>
                 </tr>
-                <tr v-if="filteredServices.length === 0">
+                <tr v-if="listDichVuHienThi().length === 0">
                   <td colspan="4" class="text-center text-muted small">Không có dữ liệu</td>
                 </tr>
               </tbody>

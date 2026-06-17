@@ -1,14 +1,13 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { ref } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import FormButtons from '@/components/admin/FormButtons.vue'
 import { useAdminDataStore } from '@/stores/adminData'
 
 const adminDataStore = useAdminDataStore()
 const keyword = ref('')
-const editingId = ref(null)
+const viTriCanUpdate = ref(-1)
 
-const customerForm = reactive({
+const newKhachHang = ref({
   name: '',
   gender: 'Nam',
   age: '',
@@ -20,8 +19,8 @@ const customerForm = reactive({
   active: true
 })
 
-const filteredCustomers = computed(() =>
-  adminDataStore.customers.filter((customer) => {
+function listKhachHangHienThi() {
+  return adminDataStore.customers.filter((customer) => {
     const keywordText = keyword.value.toLowerCase()
     return (
       customer.name.toLowerCase().includes(keywordText) ||
@@ -29,59 +28,61 @@ const filteredCustomers = computed(() =>
       customer.email.toLowerCase().includes(keywordText)
     )
   })
-)
+}
 
 function resetForm() {
-  editingId.value = null
-  customerForm.name = ''
-  customerForm.gender = 'Nam'
-  customerForm.age = ''
-  customerForm.phone = ''
-  customerForm.email = ''
-  customerForm.lastVisit = ''
-  customerForm.visits = 1
-  customerForm.image = ''
-  customerForm.active = true
+  newKhachHang.value = {
+    name: '',
+    gender: 'Nam',
+    age: '',
+    phone: '',
+    email: '',
+    lastVisit: '',
+    visits: 1,
+    image: '',
+    active: true
+  }
+  viTriCanUpdate.value = -1
 }
 
-function editCustomer(customer) {
-  editingId.value = customer.id
-  customerForm.name = customer.name
-  customerForm.gender = customer.gender
-  customerForm.age = customer.age
-  customerForm.phone = customer.phone
-  customerForm.email = customer.email
-  customerForm.lastVisit = customer.lastVisit
-  customerForm.visits = customer.visits
-  customerForm.image = customer.image
-  customerForm.active = customer.active
+function detailKhachHang(customer) {
+  newKhachHang.value = { ...customer }
+  viTriCanUpdate.value = adminDataStore.customers.findIndex((item) => item.id === customer.id)
 }
 
-function saveCustomer() {
-  const customerData = {
-    name: customerForm.name,
-    gender: customerForm.gender,
-    age: Number(customerForm.age),
-    phone: customerForm.phone,
-    email: customerForm.email,
-    lastVisit: customerForm.lastVisit,
-    visits: Number(customerForm.visits),
-    image: customerForm.image || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop',
-    active: customerForm.active
+function addKhachHang() {
+  adminDataStore.customers.push({
+    id: adminDataStore.customers.length + 1,
+    ...newKhachHang.value,
+    age: Number(newKhachHang.value.age),
+    visits: Number(newKhachHang.value.visits),
+    image: newKhachHang.value.image || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop'
+  })
+
+  resetForm()
+}
+
+function updateKhachHang() {
+  if (viTriCanUpdate.value === -1) {
+    alert('Bạn hãy chọn khách hàng cần sửa')
+    return
   }
 
-  if (editingId.value) {
-    adminDataStore.updateItem('customers', editingId.value, customerData)
-  } else {
-    adminDataStore.createItem('customers', customerData)
+  adminDataStore.customers[viTriCanUpdate.value] = {
+    ...newKhachHang.value,
+    age: Number(newKhachHang.value.age),
+    visits: Number(newKhachHang.value.visits)
   }
 
   resetForm()
 }
 
-function deleteCustomer(id) {
-  if (confirm('Bạn có chắc muốn xóa khách hàng này không?')) {
-    adminDataStore.deleteItem('customers', id)
+function removeKhachHang(customer) {
+  const index = adminDataStore.customers.findIndex((item) => item.id === customer.id)
+
+  if (index !== -1 && confirm('Bạn có chắc muốn xóa khách hàng này không?')) {
+    adminDataStore.customers.splice(index, 1)
+    resetForm()
   }
 }
 </script>
@@ -95,52 +96,56 @@ function deleteCustomer(id) {
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h6 class="mb-3">{{ editingId ? 'Sửa khách hàng' : 'Thêm khách hàng' }}</h6>
-          <form @submit.prevent="saveCustomer">
+          <h6 class="mb-3">{{ viTriCanUpdate === -1 ? 'Thêm khách hàng' : 'Sửa khách hàng' }}</h6>
+          <form @submit.prevent>
             <div class="mb-3">
               <label class="form-label small">Họ tên</label>
-              <input v-model="customerForm.name" required class="form-control form-control-sm" />
+              <input v-model="newKhachHang.name" required class="form-control form-control-sm" />
             </div>
             <div class="row g-2">
               <div class="col-6 mb-3">
                 <label class="form-label small">Giới tính</label>
-                <select v-model="customerForm.gender" class="form-select form-select-sm">
+                <select v-model="newKhachHang.gender" class="form-select form-select-sm">
                   <option>Nam</option>
                   <option>Nữ</option>
                 </select>
               </div>
               <div class="col-6 mb-3">
                 <label class="form-label small">Tuổi</label>
-                <input v-model="customerForm.age" required type="number" min="1" class="form-control form-control-sm" />
+                <input v-model="newKhachHang.age" required type="number" min="1" class="form-control form-control-sm" />
               </div>
             </div>
             <div class="mb-3">
               <label class="form-label small">Điện thoại</label>
-              <input v-model="customerForm.phone" required class="form-control form-control-sm" />
+              <input v-model="newKhachHang.phone" required class="form-control form-control-sm" />
             </div>
             <div class="mb-3">
               <label class="form-label small">Email</label>
-              <input v-model="customerForm.email" required type="email" class="form-control form-control-sm" />
+              <input v-model="newKhachHang.email" required type="email" class="form-control form-control-sm" />
             </div>
             <div class="row g-2">
               <div class="col-6 mb-3">
                 <label class="form-label small">Lần khám gần nhất</label>
-                <input v-model="customerForm.lastVisit" required type="date" class="form-control form-control-sm" />
+                <input v-model="newKhachHang.lastVisit" required type="date" class="form-control form-control-sm" />
               </div>
               <div class="col-6 mb-3">
                 <label class="form-label small">Số lượt</label>
-                <input v-model="customerForm.visits" required type="number" min="0" class="form-control form-control-sm" />
+                <input v-model="newKhachHang.visits" required type="number" min="0" class="form-control form-control-sm" />
               </div>
             </div>
             <div class="mb-3">
               <label class="form-label small">Ảnh</label>
-              <input v-model="customerForm.image" class="form-control form-control-sm" />
+              <input v-model="newKhachHang.image" class="form-control form-control-sm" />
             </div>
             <div class="form-check form-switch mb-3">
-              <input id="customerActive" v-model="customerForm.active" class="form-check-input" type="checkbox" />
+              <input id="customerActive" v-model="newKhachHang.active" class="form-check-input" type="checkbox" />
               <label class="form-check-label small" for="customerActive">Hoạt động</label>
             </div>
-            <FormButtons :editing="Boolean(editingId)" @cancel="resetForm" />
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-success btn-sm flex-fill" @click="addKhachHang">Thêm</button>
+              <button type="button" class="btn btn-warning btn-sm flex-fill" @click="updateKhachHang">Cập nhật</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" @click="resetForm">Làm mới</button>
+            </div>
           </form>
         </div>
       </div>
@@ -162,7 +167,7 @@ function deleteCustomer(id) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="customer in filteredCustomers" :key="customer.id">
+                <tr v-for="customer in listKhachHangHienThi()" :key="customer.id">
                   <td class="small">
                     <div class="d-flex align-items-center gap-2">
                       <img :src="customer.image" class="rounded-circle" style="width: 36px; height: 36px; object-fit: cover" alt="" />
@@ -184,11 +189,11 @@ function deleteCustomer(id) {
                     </span>
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-link text-success" @click="editCustomer(customer)">Sửa</button>
-                    <button class="btn btn-sm btn-link text-danger" @click="deleteCustomer(customer.id)">Xóa</button>
+                    <button class="btn btn-sm btn-link text-success" @click="detailKhachHang(customer)">Sửa</button>
+                    <button class="btn btn-sm btn-link text-danger" @click="removeKhachHang(customer)">Xóa</button>
                   </td>
                 </tr>
-                <tr v-if="filteredCustomers.length === 0">
+                <tr v-if="listKhachHangHienThi().length === 0">
                   <td colspan="6" class="text-center text-muted small">Không có dữ liệu</td>
                 </tr>
               </tbody>

@@ -1,16 +1,16 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const message = ref('')
 
-const loginForm = reactive({
+const loginForm = ref({
   email: '',
   password: ''
 })
 
-const registerForm = reactive({
+const registerForm = ref({
   name: '',
   email: '',
   phone: '',
@@ -18,17 +18,19 @@ const registerForm = reactive({
 })
 
 function login() {
-  if (loginForm.email && loginForm.password) {
+  if (loginForm.value.email && loginForm.value.password) {
     router.push({ name: 'admin-dashboard' })
   }
 }
 
 function register() {
-  message.value = `Đã tạo tài khoản cho ${registerForm.name}`
-  registerForm.name = ''
-  registerForm.email = ''
-  registerForm.phone = ''
-  registerForm.password = ''
+  message.value = `Đã tạo tài khoản cho ${registerForm.value.name}`
+  registerForm.value = {
+    name: '',
+    email: '',
+    phone: '',
+    password: ''
+  }
 }
 </script>
 

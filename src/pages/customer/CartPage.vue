@@ -1,12 +1,14 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { formatPrice } from '@/data/services'
 
 const cartStore = useCartStore()
 const successMessage = ref('')
 
-const hasCartItems = computed(() => cartStore.cartItems.length > 0)
+function hasCartItems() {
+  return cartStore.cartItems.length > 0
+}
 
 function confirmOrder() {
   successMessage.value = 'Đã xác nhận đơn đặt lịch. Nhân viên sẽ liên hệ lại với bạn.'
@@ -26,7 +28,7 @@ function confirmOrder() {
     <div class="container">
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-      <div v-if="!hasCartItems" class="text-center py-5 border bg-light">
+      <div v-if="!hasCartItems()" class="text-center py-5 border bg-light">
         <h5>Giỏ hàng đang trống</h5>
         <p class="text-muted mb-4">Bạn hãy đặt lịch từ trang chủ để tạo đơn hàng.</p>
         <RouterLink class="btn btn-success" :to="{ name: 'home' }">Về trang chủ</RouterLink>
@@ -85,11 +87,11 @@ function confirmOrder() {
               <h5 class="mb-3">Tóm tắt đơn hàng</h5>
               <div class="d-flex justify-content-between border-bottom py-2 small">
                 <span>Số dịch vụ</span>
-                <strong>{{ cartStore.totalQuantity }}</strong>
+                <strong>{{ cartStore.tinhTongSoLuong() }}</strong>
               </div>
               <div class="d-flex justify-content-between border-bottom py-2 small">
                 <span>Tổng tiền</span>
-                <strong>{{ formatPrice(cartStore.totalMoney) }}</strong>
+                <strong>{{ formatPrice(cartStore.tinhTongTien()) }}</strong>
               </div>
               <p class="text-muted small mt-3">
                 Sau khi xác nhận, phòng khám sẽ gọi lại để chốt lịch và hướng dẫn thanh toán.

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { services, formatPrice } from '@/data/services'
 import { doctors } from '@/data/doctors'
@@ -9,7 +9,7 @@ const router = useRouter()
 const cartStore = useCartStore()
 const successMessage = ref('')
 
-const bookingForm = reactive({
+const bookingForm = ref({
   customerName: '',
   phone: '',
   email: '',
@@ -27,41 +27,43 @@ function scrollTo(id) {
 }
 
 function resetBookingForm() {
-  bookingForm.customerName = ''
-  bookingForm.phone = ''
-  bookingForm.email = ''
-  bookingForm.birthday = ''
-  bookingForm.serviceId = ''
-  bookingForm.doctorId = ''
-  bookingForm.appointmentDate = ''
-  bookingForm.appointmentTime = ''
-  bookingForm.note = ''
-  bookingForm.quantity = 1
+  bookingForm.value = {
+    customerName: '',
+    phone: '',
+    email: '',
+    birthday: '',
+    serviceId: '',
+    doctorId: '',
+    appointmentDate: '',
+    appointmentTime: '',
+    note: '',
+    quantity: 1
+  }
 }
 
 function submitBooking() {
-  const selectedService = services.find((service) => String(service.id) === String(bookingForm.serviceId))
-  const selectedDoctor = doctors.find((doctor) => String(doctor.id) === String(bookingForm.doctorId))
+  const selectedService = services.find((service) => String(service.id) === String(bookingForm.value.serviceId))
+  const selectedDoctor = doctors.find((doctor) => String(doctor.id) === String(bookingForm.value.doctorId))
 
   if (!selectedService || !selectedDoctor) {
     return
   }
 
   cartStore.addBookingToCart({
-    customerName: bookingForm.customerName,
-    phone: bookingForm.phone,
-    email: bookingForm.email,
-    birthday: bookingForm.birthday,
+    customerName: bookingForm.value.customerName,
+    phone: bookingForm.value.phone,
+    email: bookingForm.value.email,
+    birthday: bookingForm.value.birthday,
     serviceId: selectedService.id,
     serviceName: selectedService.name,
     doctorId: selectedDoctor.id,
     doctorName: selectedDoctor.name,
-    appointmentDate: bookingForm.appointmentDate,
-    appointmentTime: bookingForm.appointmentTime,
-    note: bookingForm.note,
+    appointmentDate: bookingForm.value.appointmentDate,
+    appointmentTime: bookingForm.value.appointmentTime,
+    note: bookingForm.value.note,
     price: selectedService.price,
     unit: selectedService.unit || '',
-    quantity: bookingForm.quantity
+    quantity: bookingForm.value.quantity
   })
 
   successMessage.value = 'Đã thêm lịch đặt vào giỏ hàng'

@@ -18,17 +18,17 @@ export const useCartStore = defineStore('cart', {
   state: () => ({
     cartItems: getCartFromLocalStorage()
   }),
-  getters: {
-    totalQuantity(state) {
-      return state.cartItems.reduce((total, item) => total + Number(item.quantity || 1), 0)
-    },
-    totalMoney(state) {
-      return state.cartItems.reduce((total, item) => total + Number(item.price || 0) * Number(item.quantity || 1), 0)
-    }
-  },
   actions: {
     saveCart() {
       localStorage.setItem('biteeth_cart', JSON.stringify(this.cartItems))
+    },
+    tinhTongSoLuong() {
+      return this.cartItems.reduce((total, item) => total + Number(item.quantity || 1), 0)
+    },
+    tinhTongTien() {
+      return this.cartItems.reduce((total, item) => {
+        return total + Number(item.price || 0) * Number(item.quantity || 1)
+      }, 0)
     },
     addBookingToCart(bookingData) {
       this.cartItems.push({

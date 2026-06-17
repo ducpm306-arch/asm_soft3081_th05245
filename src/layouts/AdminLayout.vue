@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -13,7 +12,9 @@ const adminLinks = [
   { name: 'admin-invoices', text: 'Hóa đơn', path: '/admin/hoa-don' }
 ]
 
-const pageTitle = computed(() => route.meta.title || 'Quản trị')
+function getPageTitle() {
+  return route.meta.title || 'Quản trị'
+}
 </script>
 
 <template>
@@ -42,7 +43,7 @@ const pageTitle = computed(() => route.meta.title || 'Quản trị')
 
     <main class="flex-fill bg-light min-vh-100">
       <div class="bg-white border-bottom p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <h5 class="mb-0">{{ pageTitle }}</h5>
+        <h5 class="mb-0">{{ getPageTitle() }}</h5>
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <RouterLink class="btn btn-sm btn-outline-secondary" :to="{ name: 'home' }">Trang chủ</RouterLink>
         </div>

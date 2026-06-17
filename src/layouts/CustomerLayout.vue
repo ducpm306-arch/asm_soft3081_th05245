@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
@@ -7,8 +6,6 @@ const route = useRoute()
 const router = useRouter()
 const cartStore = useCartStore()
 const currentYear = new Date().getFullYear()
-
-const cartQuantity = computed(() => cartStore.totalQuantity)
 
 function goToHomeSection(sectionId) {
   if (route.name !== 'home') {
@@ -54,7 +51,9 @@ function goToHomeSection(sectionId) {
         <div class="d-flex gap-2">
           <RouterLink class="btn btn-outline-success position-relative" :to="{ name: 'cart' }">
             Giỏ hàng
-            <span v-if="cartQuantity > 0" class="badge bg-success ms-1">{{ cartQuantity }}</span>
+            <span v-if="cartStore.tinhTongSoLuong() > 0" class="badge bg-success ms-1">
+              {{ cartStore.tinhTongSoLuong() }}
+            </span>
           </RouterLink>
           <RouterLink class="btn btn-success" :to="{ name: 'auth' }">Đăng nhập</RouterLink>
         </div>
